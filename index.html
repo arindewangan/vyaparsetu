@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VyaparSetu — व्यापारसेतु | Financial Inclusion & Livelihoods</title>
+<style>
+  :root { --ink:#1a2b3c; --accent:#0e7c4a; --bg:#f6fbf8; --card:#ffffff; }
+  * { box-sizing:border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin:0; color:var(--ink); background:var(--bg); }
+  header { background:linear-gradient(135deg,#0e7c4a,#149a5c); color:#fff; padding:56px 24px; text-align:center; }
+  header h1 { margin:0 0 8px; font-size:2.6rem; }
+  header p.hi { font-size:1.3rem; opacity:.9; margin:0 0 12px; }
+  header p.sub { max-width:640px; margin:0 auto; font-size:1.05rem; line-height:1.6; opacity:.95; }
+  .cta { margin-top:24px; }
+  .btn { display:inline-block; background:#fff; color:var(--accent); font-weight:700; padding:14px 28px; border-radius:10px; text-decoration:none; margin:6px; }
+  .btn.ghost { background:transparent; color:#fff; border:2px solid #fff; }
+  main { max-width:960px; margin:0 auto; padding:40px 24px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:32px 0; }
+  .card { background:var(--card); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,.06); }
+  .card h3 { margin-top:0; color:var(--accent); }
+  .theme { display:inline-block; background:#e6f4ec; color:var(--accent); font-weight:700; padding:6px 14px; border-radius:999px; font-size:.85rem; }
+  footer { text-align:center; padding:32px; color:#5a6b7d; font-size:.9rem; }
+</style>
+</head>
+<body>
+<header>
+  <p class="hi">व्यापारसेतु</p>
+  <h1>VyaparSetu</h1>
+  <p class="sub">Invoices, cashflow and money-smarts for India's 60M+ micro-entrepreneurs —
+  street vendors, kirana shops, tailors. No smartphone expertise needed. Runs in your browser.</p>
+  <div class="cta">
+    <a class="btn" href="/demo/">Try the live demo</a>
+    <a class="btn ghost" href="https://github.com/arindewangan/vyaparsetu" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+<main>
+  <p><span class="theme">Theme: {{ theme_name }}</span></p>
+  <div class="grid">
+    <div class="card"><h3>🧾 Instant Invoices</h3><p>Add items, get a professional bill with totals and tax math in seconds. Print or save it.</p></div>
+    <div class="card"><h3>📒 Cashflow Diary</h3><p>Log daily income and expenses. See your real balance and where the money goes.</p></div>
+    <div class="card"><h3>🎯 Savings Planner</h3><p>Set a goal — a fridge, school fees, a second cart — and see exactly how many days of saving it takes.</p></div>
+    <div class="card"><h3>🤝 Sathi Advisor</h3><p>Rule-based money guidance in simple English and Hindi: savings, UPI, loans, GST, emergency funds.</p></div>
+  </div>
+  <p><strong>Honest tech:</strong> all math is computed live; the advisor is rule-based financial-literacy guidance, labeled as such. No sign-ups, no data leaves your device on the demo page.</p>
+</main>
+<footer>Solo entry — Arin Dewangan (Cybs Innovations) · Social Impact Hackathon 2026 · Built Oct 11, 2026</footer>
+</body>
+</html>
