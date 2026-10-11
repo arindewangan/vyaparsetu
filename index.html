@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VyaparSetu Demo — व्यापारसेतु</title>
+<style>
+  :root { --ink:#1a2b3c; --accent:#0e7c4a; --accent2:#149a5c; --bg:#f6fbf8; --card:#fff; --mut:#5a6b7d; }
+  * { box-sizing:border-box; }
+  body { font-family:system-ui,-apple-system,"Segoe UI",sans-serif; margin:0; color:var(--ink); background:var(--bg); }
+  header { background:linear-gradient(135deg,#0e7c4a,#149a5c); color:#fff; padding:28px 20px; text-align:center; }
+  header h1 { margin:0; font-size:1.9rem; }
+  header p { margin:6px 0 0; opacity:.92; }
+  nav.tabs { display:flex; gap:8px; justify-content:center; padding:14px; flex-wrap:wrap; background:#fff; box-shadow:0 1px 6px rgba(0,0,0,.06); position:sticky; top:0; z-index:5; }
+  nav.tabs button { border:2px solid var(--accent); background:#fff; color:var(--accent); font-weight:700; padding:10px 18px; border-radius:999px; cursor:pointer; font-size:.95rem; }
+  nav.tabs button.active, nav.tabs button:hover { background:var(--accent); color:#fff; }
+  main { max-width:920px; margin:0 auto; padding:24px 16px 60px; }
+  section.tab { display:none; }
+  section.tab.active { display:block; }
+  .card { background:var(--card); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,.06); margin-bottom:16px; }
+  h2 { color:var(--accent); margin-top:0; }
+  label { display:block; font-weight:600; margin:10px 0 4px; font-size:.9rem; }
+  input, select, textarea { width:100%; padding:10px 12px; border:1.5px solid #cbd5dd; border-radius:8px; font-size:1rem; }
+  .row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:640px){ .row,.row2{grid-template-columns:1fr;} }
+  button.primary { background:var(--accent); color:#fff; border:none; font-weight:700; padding:12px 22px; border-radius:10px; cursor:pointer; font-size:1rem; margin-top:12px; }
+  button.primary:hover { background:var(--accent2); }
+  button.small { padding:6px 12px; font-size:.85rem; margin-top:6px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid #e5eaef; font-size:.95rem; }
+  th { color:var(--mut); font-size:.8rem; text-transform:uppercase; }
+  .total { font-size:1.4rem; font-weight:800; color:var(--accent); margin-top:10px; }
+  .invoice { border:2px dashed var(--accent); border-radius:12px; padding:20px; margin-top:16px; background:#fdfffe; }
+  .invoice h3 { margin:0 0 4px; }
+  .mut { color:var(--mut); font-size:.85rem; }
+  .answer { background:#eaf7f0; border-left:4px solid var(--accent); padding:14px; border-radius:0 10px 10px 0; margin-top:12px; line-height:1.6; }
+  .q { background:#f1f5f9; padding:10px 14px; border-radius:10px; margin-top:12px; font-weight:600; }
+  .pill { display:inline-block; background:#e6f4ec; color:var(--accent); font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:999px; margin-left:8px; }
+  #chart { width:100%; height:220px; }
+  footer { text-align:center; color:var(--mut); font-size:.85rem; padding:24px; }
+  @media print { nav.tabs, .noprint { display:none; } header { padding:12px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>व्यापारसेतु · VyaparSetu <span class="pill" style="background:rgba(255,255,255,.25);color:#fff">LIVE DEMO</span></h1>
+  <p>Invoices, cashflow and money-smarts for India's micro-entrepreneurs — computed live, right here.</p>
+</header>
+<nav class="tabs noprint">
+  <button class="active" data-tab="invoice">🧾 Invoice</button>
+  <button data-tab="cash">📒 Cashflow</button>
+  <button data-tab="save">🎯 Savings</button>
+  <button data-tab="sathi">🤝 Sathi Advisor</button>
+</nav>
+<main>
+
+<!-- ============================ INVOICE ============================ -->
+<section class="tab active" id="tab-invoice">
+  <div class="card">
+    <h2>🧾 Instant Invoice <span class="mut">/ तुरंत बिल</span></h2>
+    <p class="mut">Add items — totals and tax are computed instantly. Print it or hand the phone to your customer.</p>
+    <div class="row">
+      <div><label>Item name</label><input id="it-name" placeholder="e.g. Samosa"></div>
+      <div><label>Qty</label><input id="it-qty" type="number" min="1" value="1"></div>
+      <div><label>Price (₹)</label><input id="it-price" type="number" min="0" step="0.5" placeholder="15"></div>
+    </div>
+    <button class="primary small" onclick="addItem()">+ Add item</button>
+    <table id="items-table"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr></thead><tbody></tbody></table>
+    <div class="row2" style="margin-top:12px">
+      <div><label>Tax % <span class="mut">(illustrative)</span></label><input id="tax-rate" type="number" min="0" max="100" value="0"></div>
+      <div><label>Customer name (optional)</label><input id="cust-name" placeholder="e.g. Ramesh Kumar"></div>
+    </div>
+    <button class="primary" onclick="makeInvoice()">Generate invoice</button>
+    <div id="invoice-out"></div>
+  </div>
+</section>
+
+<!-- ============================ CASHFLOW ============================ -->
+<section class="tab" id="tab-cash">
+  <div class="card">
+    <h2>📒 Cashflow Diary <span class="mut">/ रोज़ का हिसाब</span></h2>
+    <p class="mut">Every rupee in and out. Your balance is computed live — this is the record banks ask for.</p>
+    <div class="row2">
+      <div><label>Type</label><select id="cf-kind"><option value="income">Income (आमदनी)</option><option value="expense">Expense (खर्च)</option></select></div>
+      <div><label>Amount (₹)</label><input id="cf-amt" type="number" min="0.5" step="0.5" placeholder="500"></div>
+    </div>
+    <div class="row2">
+      <div><label>Category</label><input id="cf-cat" placeholder="e.g. sales, stock, rent"></div>
+      <div><label>Note (optional)</label><input id="cf-note" placeholder="e.g. morning sales"></div>
+    </div>
+    <button class="primary" onclick="addEntry()">Add entry</button>
+    <div class="total" id="cf-balance">Balance: ₹0</div>
+    <table id="cf-table"><thead><tr><th>#</th><th>Type</th><th>Amount</th><th>Category</th><th>Note</th></tr></thead><tbody></tbody></table>
+    <p class="mut" id="cf-cats"></p>
+  </div>
+</section>
+
+<!-- ============================ SAVINGS ============================ -->
+<section class="tab" id="tab-save">
+  <div class="card">
+    <h2>🎯 Savings Planner <span class="mut">/ बचत योजना</span></h2>
+    <p class="mut">Dream it, then count the days. A fridge, school fees, a second cart — the math is honest.</p>
+    <div class="row2">
+      <div><label>Goal amount (₹)</label><input id="sv-goal" type="number" min="1" placeholder="10000"></div>
+      <div><label>Daily savings (₹)</label><input id="sv-daily" type="number" min="1" placeholder="100"></div>
+    </div>
+    <button class="primary" onclick="planSavings()">Show my plan</button>
+    <div id="sv-out"></div>
+    <canvas id="chart" style="display:none"></canvas>
+  </div>
+</section>
+
+<!-- ============================ SATHI ============================ -->
+<section class="tab" id="tab-sathi">
+  <div class="card">
+    <h2>🤝 Sathi Advisor <span class="mut">/ साथी सलाहकार</span> <span class="pill">RULE-BASED</span></h2>
+    <p class="mut">Money guidance in simple English and Hindi. Rule-based financial-literacy answers — not a live AI model, no data leaves your device.</p>
+    <label>Ask about savings (बचत), UPI, loans (कर्ज़), GST, emergency funds, or records (हिसाब)</label>
+    <input id="sathi-q" placeholder="e.g. how can I save money daily?">
+    <button class="primary" onclick="askSathi()">Ask Sathi</button>
+    <div id="sathi-out"></div>
+    <p class="mut" style="margin-top:16px">Try: “upi qr kaise lagayein”, “loan interest”, “gst limit”, “emergency fund”.</p>
+  </div>
+</section>
+
+</main>
+<footer>VyaparSetu · Social Impact Hackathon 2026 · Theme: Financial Inclusion &amp; Livelihoods · Solo entry — Arin Dewangan (Cybs Innovations) · Built Oct 11, 2026</footer>
+<script>
+/* VyaparSetu demo — all computation happens live in your browser.
+   The Flask API in app.py mirrors this logic for programmatic use. */
+const $ = id => document.getElementById(id);
+const fmt = n => "₹" + Number(n).toLocaleString("en-IN", {maximumFractionDigits: 2});
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav.tabs button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("nav.tabs button").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    $("tab-" + b.dataset.tab).classList.add("active");
+  });
+});
+
+/* ---------- invoice ---------- */
+let items = [];
+function addItem() {
+  const name = ($("it-name").value || "Item").slice(0, 40);
+  const qty = parseFloat($("it-qty").value), price = parseFloat($("it-price").value);
+  if (!(qty > 0) || !(price >= 0)) { alert("Qty must be > 0 and price >= 0"); return; }
+  items.push({name, qty, price});
+  $("it-name").value = ""; $("it-price").value = "";
+  renderItems();
+}
+function removeItem(i) { items.splice(i, 1); renderItems(); }
+function renderItems() {
+  const tb = document.querySelector("#items-table tbody");
+  tb.innerHTML = items.map((it, i) =>
+    `<tr><td>${esc(it.name)}</td><td>${it.qty}</td><td>${fmt(it.price)}</td><td>${fmt(it.qty*it.price)}</td><td><button class="small" onclick="removeItem(${i})">✕</button></td></tr>`).join("");
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+let invSeq = 0;
+function makeInvoice() {
+  if (!items.length) { alert("Add at least one item first"); return; }
+  const taxRate = Math.min(100, Math.max(0, parseFloat($("tax-rate").value) || 0));
+  const cust = esc($("cust-name").value || "Walk-in customer");
+  const subtotal = items.reduce((s, it) => s + it.qty * it.price, 0);
+  const tax = subtotal * taxRate / 100, total = subtotal + tax;
+  invSeq++;
+  const d = new Date();
+  const no = "VST-" + d.toISOString().slice(0,10).replace(/-/g,"") + "-" + String(invSeq).padStart(4,"0");
+  $("invoice-out").innerHTML = `<div class="invoice">
+    <h3>🧾 VyaparSetu Invoice</h3>
+    <p class="mut">${no} · ${d.toLocaleDateString("en-IN")} · Billed to: ${cust}</p>
+    <table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>
+    ${items.map(it => `<tr><td>${esc(it.name)}</td><td>${it.qty}</td><td>${fmt(it.price)}</td><td>${fmt(it.qty*it.price)}</td></tr>`).join("")}
+    </tbody></table>
+    <p>Subtotal: ${fmt(subtotal)}<br>Tax (${taxRate}%): ${fmt(tax)}</p>
+    <div class="total">Total: ${fmt(total)}</div>
+    <p class="mut">Illustrative tax calculation — not tax advice.</p>
+    <button class="primary small noprint" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>`;
+  $("invoice-out").scrollIntoView({behavior:"smooth"});
+}
+
+/* ---------- cashflow ---------- */
+let entries = JSON.parse(localStorage.getItem("vs_cf") || "[]");
+let seq = entries.length;
+function addEntry() {
+  const kind = $("cf-kind").value;
+  const amt = parseFloat($("cf-amt").value);
+  if (!(amt > 0)) { alert("Amount must be greater than zero"); return; }
+  entries.push({id: ++seq, kind, amount: amt, category: ($("cf-cat").value || "general").slice(0,40), note: ($("cf-note").value || "").slice(0,80)});
+  localStorage.setItem("vs_cf", JSON.stringify(entries));
+  $("cf-amt").value = ""; $("cf-note").value = "";
+  renderCF();
+}
+function renderCF() {
+  const tb = document.querySelector("#cf-table tbody");
+  let bal = 0, cats = {};
+  tb.innerHTML = entries.map(e => {
+    bal += e.kind === "income" ? e.amount : -e.amount;
+    cats[e.category] = (cats[e.category] || 0) + (e.kind === "income" ? e.amount : -e.amount);
+    return `<tr><td>${e.id}</td><td>${e.kind === "income" ? "➕ Income" : "➖ Expense"}</td><td>${fmt(e.amount)}</td><td>${esc(e.category)}</td><td>${esc(e.note)}</td></tr>`;
+  }).join("");
+  $("cf-balance").textContent = "Balance: " + fmt(bal);
+  $("cf-cats").textContent = Object.keys(cats).length ? "By category: " + Object.entries(cats).map(([k,v]) => `${k}: ${fmt(v)}`).join(" · ") : "";
+}
+renderCF();
+
+/* ---------- savings ---------- */
+function planSavings() {
+  const goal = parseFloat($("sv-goal").value), daily = parseFloat($("sv-daily").value);
+  if (!(goal > 0) || !(daily > 0)) { alert("Goal and daily savings must be greater than zero"); return; }
+  const days = Math.ceil(goal / daily);
+  $("sv-out").innerHTML = `<div class="total">${days} days <span class="mut">(${(days/30).toFixed(1)} months)</span></div>
+    <p>Save ${fmt(daily)} every day and you'll reach <strong>${fmt(goal)}</strong> in <strong>${days} days</strong>.
+    Keep it up for a year and that's <strong>${fmt(daily*365)}</strong> — real wealth, one day at a time. 💪</p>
+    <p class="mut">Simple projection — no interest assumed.</p>`;
+  drawChart(goal, daily, days);
+}
+function drawChart(goal, daily, days) {
+  const c = $("chart"); c.style.display = "block";
+  const ctx = c.getContext("2d"), W = c.width = c.offsetWidth * 2, H = c.height = 440;
+  ctx.clearRect(0, 0, W, H);
+  const pts = [30, 90, 180, 365].filter(d => d < days); pts.push(days);
+  const maxV = goal;
+  const bw = W / (pts.length * 2);
+  ctx.fillStyle = "#0e7c4a";
+  pts.forEach((d, i) => {
+    const v = Math.min(goal, daily * d), h = (v / maxV) * (H - 90);
+    const x = bw * (i * 2 + 0.5);
+    ctx.fillRect(x, H - 50 - h, bw, h);
+    ctx.fillStyle = "#1a2b3c"; ctx.font = "24px system-ui"; ctx.textAlign = "center";
+    ctx.fillText("Day " + d, x + bw/2, H - 22);
+    ctx.fillText(fmt(v), x + bw/2, H - 60 - h);
+    ctx.fillStyle = "#0e7c4a";
+  });
+  ctx.fillStyle = "#5a6b7d"; ctx.font = "26px system-ui"; ctx.textAlign = "left";
+  ctx.fillText("Savings milestones → " + fmt(goal) + " goal", 16, 36);
+}
+
+/* ---------- sathi (rule-based, mirrors app.py) ---------- */
+const RULES = [
+  {t:"savings", k:["save","saving","bachat","बचत"], a:"Pay yourself first: move 10% of every day's earnings into a separate envelope or account before spending. Even ₹50 a day becomes ₹18,250 in a year. पहले बचत, फिर खर्च — रोज़ की कमाई का 10% अलग रखें।"},
+  {t:"upi", k:["upi","qr","digital payment","online payment","phonepe","paytm","gpay","क्यूआर"], a:"A free UPI QR code at your stall builds trust and a payment record banks can see. Print it, laminate it, and always confirm the payment sound/notification before handing over goods. UPI QR मुफ़्त है — दुकान पर लगाएं और पेमेंट की आवाज़ ज़रूर सुनें।"},
+  {t:"loan", k:["loan","karz","कर्ज","udhaar","borrow","interest","byaj","ब्याज"], a:"Before borrowing, check: (1) the total repayment, not just the EMI; (2) whether the interest is flat or reducing-balance. Avoid lenders charging over 3% per month. Mudra and SHG loans from banks are far cheaper than informal lenders. कर्ज़ लेने से पहले कुल चुकौती ज़रूर गिनें — 3% प्रति माह से ज़्यादा ब्याज से बचें।"},
+  {t:"gst", k:["gst","tax","टैक्स","invoice","bill","receipt"], a:"You only need GST registration above ₹40 lakh annual turnover (₹20 lakh for services). Below that, simple bills like the ones VyaparSetu makes are enough to look professional and build a paper trail for future bank loans. 40 लाख सालाना से कम टर्नओवर पर GST ज़रूरी नहीं — साफ़-सुथरा बिल ही काफ़ी है।"},
+  {t:"emergency", k:["emergency","rainy day","medical","hospital","बीमारी","आपात"], a:"Keep a 30-day emergency buffer: roughly one month of household expenses, separate from business cash. Start with ₹100 a week if that is all you can manage — the habit matters more than the amount. घर के एक महीने के खर्च जितना आपातकालीन फंड अलग रखें।"},
+  {t:"record", k:["record","khata","खाता","ledger","bahikhata","hisab","हिसाब","track"], a:"Write down every rupee in and out — even on paper. A 3-month record of daily income is the strongest document you can show a bank for a Mudra loan. VyaparSetu's cashflow diary does this for you automatically. हर रुपये का हिसाब लिखें — यही बैंक लोन का सबसे मज़बूत सबूत है।"}
+];
+const FALLBACK = "I can help with savings (बचत), UPI payments, loans (कर्ज़), GST/tax basics, emergency funds, and keeping business records (हिसाब). Ask me about any of these! मैं बचत, UPI, कर्ज़, GST, आपातकालीन फंड और हिसाब-किताब पर मदद कर सकता हूँ।";
+function askSathi() {
+  const q = $("sathi-q").value.trim();
+  if (!q) { alert("Type a question first"); return; }
+  const ql = q.toLowerCase();
+  const hit = RULES.find(r => r.k.some(k => ql.includes(k)));
+  const ans = hit ? hit.a : FALLBACK;
+  const topic = hit ? hit.t : "general";
+  $("sathi-out").innerHTML = `<div class="q">You: ${esc(q)}</div>
+    <div class="answer"><strong>Sathi <span class="pill">RULE-BASED · ${topic}</span></strong><br>${esc(ans)}</div>`;
+}
+$("sathi-q").addEventListener("keydown", e => { if (e.key === "Enter") askSathi(); });
+</script>
+</body>
+</html>
